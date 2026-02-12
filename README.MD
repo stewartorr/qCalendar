@@ -1,6 +1,6 @@
 # qCalendar
 
-qCalendar is a beautiful & simple calendar date picker in TypeScript designed to be beautifully simple, intuitive and lightweight.
+qCalendar is a beautiful & simple calendar date picker in TypeScript designed to be beautifully simple, intuitive and lightweight. It is build to be accessible and using modern semantic markup.
 
 ![qCalendar Preview](docs/qcalendar.png)
 
@@ -21,3 +21,7 @@ Built in TypeScript and using SCSS, it uses Vite to help build and test changes 
 ## Designer & Author
 
 qCalendar was designed and developed by Stewart Orr (https://www.stewartorr.co.uk).
+
+## Credits
+
+The icons are from the beautiful library [Phosphor Icons](https://phosphoricons.com/).
