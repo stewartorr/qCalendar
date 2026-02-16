@@ -1,33 +1,33 @@
 /*------------------------------------------------------------------------------
-> qCalendar
+> soCalendar
 ------------------------------------------------------------------------------*/
 
-.qcalendar-target::-webkit-calendar-picker-indicator {
+.socalendar-target::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 }
 
-.qcalendar-target[type="date"] {
+.socalendar-target[type="date"] {
   /* appearance controls styling */
   appearance: textfield;
   -moz-appearance: textfield;
   -webkit-appearance: textfield;
 }
 
-.qcalendar {
-  --qcalendar-bg-color: #fff;
-  --qcalendar-border-radius: 20px;
-  --qcalendar-primary-color: #099ba4;
-  --qcalendar-primary-color-light: #E7F8F7;
-  --qcalendar-primary-color-hover: #CEF0EF;
-  --qcalendar-secondary-color: #495057;
-  --qcalendar-white-color: #fff;
-  --qcalendar-dark-color: #161616;
-  --qcalendar-gray-color: #999;
-  --qcalendar-backdrop: rgba(9, 155, 164, 0.25);
+.socalendar {
+  --socalendar-bg-color: #fff;
+  --socalendar-border-radius: 20px;
+  --socalendar-primary-color: #099ba4;
+  --socalendar-primary-color-light: #E7F8F7;
+  --socalendar-primary-color-hover: #CEF0EF;
+  --socalendar-secondary-color: #495057;
+  --socalendar-white-color: #fff;
+  --socalendar-dark-color: #161616;
+  --socalendar-gray-color: #999;
+  --socalendar-backdrop: rgba(9, 155, 164, 0.25);
   
-  background: var(--qcalendar-bg-color);
-  border-radius: var(--qcalendar-border-radius);
+  background: var(--socalendar-bg-color);
+  border-radius: var(--socalendar-border-radius);
   border: 0;
   box-shadow: 0 1em 5em rgba(0, 0, 0, 0.25);
   display: block;
@@ -43,7 +43,7 @@
   z-index: 1001;
   
   &::backdrop {
-    background: var(--qcalendar-backdrop);
+    background: var(--socalendar-backdrop);
     transition: all 0.5s ease;
     
     @starting-style {
@@ -51,7 +51,7 @@
     }
   }
 
-  .qcalendar-inner {
+  .socalendar-inner {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -67,7 +67,7 @@
     transform: scale(1) translate3d(-50%, -50%, 0);
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     
-    .qcalendar-inner {
+    .socalendar-inner {
       opacity: 1;
       transform: scale(1);
       transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.15s;
@@ -76,15 +76,15 @@
   
   
   // Utility classes
-  &.qcalendar-visible {
+  &.socalendar-visible {
     display: block;
   }
   
-  .qcalendar-hidden {
+  .socalendar-hidden {
     display: none !important;
   }
   
-  .qcalendar-visually-hidden {
+  .socalendar-visually-hidden {
     border: 0;
     clip-path: inset(50%);
     clip: rect(0 0 0 0);
@@ -96,16 +96,16 @@
     width: 1px;
   }
   
-  .qcalendar-year-picker-scroller,
-  .qcalendar-header,
-  .qcalendar-footer {
+  .socalendar-year-picker-scroller,
+  .socalendar-header,
+  .socalendar-footer {
     align-items: center;
     display: flex;
     gap: 5px;
     justify-content: space-between;
     
-    .qcalendar-label-prev,
-    .qcalendar-label-next {
+    .socalendar-label-prev,
+    .socalendar-label-next {
       align-items: center;
       display: flex;
       height: 32px;
@@ -115,7 +115,7 @@
     button {
       background: none;
       border: 0;
-      color: var(--qcalendar-gray-color);
+      color: var(--socalendar-gray-color);
       cursor: pointer;
       line-height: 1;
       margin: 0;
@@ -130,10 +130,10 @@
       }
       
       &:not([disabled]):hover {
-        color: var(--qcalendar-secondary-color);
+        color: var(--socalendar-secondary-color);
       }
       
-      &.qcalendar-back {
+      &.socalendar-back {
         opacity: 1;
         transition: 0.15s ease 0.15s;
         
@@ -143,26 +143,26 @@
         }
       }
       
-      &.qcalendar-button-label {
+      &.socalendar-button-label {
         height: 1.7em;
         overflow: hidden;
         position: relative;
         width: 50%;
         
-        &#qCalendar-label-month {
-          color: var(--qcalendar-dark-color);
+        &#soCalendar-label-month {
+          color: var(--socalendar-dark-color);
           text-align: right;
         }
         
-        &#qCalendar-label-year {
+        &#soCalendar-label-year {
           text-align: left;
         }
         
         &::before {
           content: "";
           position: absolute;
-          box-shadow: 0 6px 6px -4px var(--qcalendar-bg-color) inset, 
-          0 -6px 6px -4px var(--qcalendar-bg-color) inset;
+          box-shadow: 0 6px 6px -4px var(--socalendar-bg-color) inset, 
+          0 -6px 6px -4px var(--socalendar-bg-color) inset;
           inset: 0;
           z-index: 1;
         }
@@ -201,9 +201,9 @@
     }
   }
   
-  .qcalendar-label {
+  .socalendar-label {
     align-items: center;
-    color: var(--qcalendar-secondary-color);
+    color: var(--socalendar-secondary-color);
     display: flex;
     flex-flow: row nowrap;
     flex-grow: 1;
@@ -222,12 +222,12 @@
     }
   }
   
-  .qcalendar-content-wrapper {
+  .socalendar-content-wrapper {
     max-width: 350px;
     overflow: visible;
   }
   
-  .qcalendar-content-inner {
+  .socalendar-content-inner {
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
@@ -236,7 +236,7 @@
     will-change: transform;
   }
   
-  .qcalendar-content {
+  .socalendar-content {
     display: flex;
     flex: 0 0 100%;
     transition: none;
@@ -246,7 +246,7 @@
       border: 0;
       margin: 0;			
       th {
-        color: var(--qcalendar-gray-color);
+        color: var(--socalendar-gray-color);
         font-weight: normal;
         font-size: 12px;;
         padding: 0.5em 0.33em;
@@ -258,12 +258,12 @@
       
       td {
         text-align: center;
-        border: 1px solid var(--qcalendar-white-color);
+        border: 1px solid var(--socalendar-white-color);
       }
     }
     
-    .qcalendar-month-picker,
-    .qcalendar-year-picker {
+    .socalendar-month-picker,
+    .socalendar-year-picker {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -304,7 +304,7 @@
       }
     }
     
-    .qcalendar-year-picker {
+    .socalendar-year-picker {
       li {
         flex: 0 0 calc(50% - 4px);
         
@@ -332,25 +332,25 @@
       }
     }
     
-    .qcalendar-year-picker-scroller {
+    .socalendar-year-picker-scroller {
       border-radius: 6px;
       padding: 10px;
-      border: 1px solid var(--qcalendar-gray-color);
+      border: 1px solid var(--socalendar-gray-color);
       margin-bottom: 10px;
       flex: 0 1 100%;
       width: 100%;
       
-      .qcalendar-year-picker-label {
+      .socalendar-year-picker-label {
         font-size: 20px;
       }
     }
     
-    button.qcalendar-button {
+    button.socalendar-button {
       box-sizing: border-box;
-      background: var(--qcalendar-primary-color-light);
+      background: var(--socalendar-primary-color-light);
       border: 0;
       border-radius: 0.33em;
-      color: var(--qcalendar-primary-color);
+      color: var(--socalendar-primary-color);
       cursor: pointer;
       display: block;
       font-size: 16px;
@@ -359,11 +359,11 @@
       will-change: background;
       
       &:not([disabled]):hover {
-        background: var(--qcalendar-primary-color-hover);
+        background: var(--socalendar-primary-color-hover);
       }
     }
     
-    table.qcalendar-date-picker {
+    table.socalendar-date-picker {
       button {
         height: 3em;
         line-height: 3;
@@ -379,8 +379,8 @@
     }
     
     button.isCurrent {
-      background: var(--qcalendar-white-color);
-      border: 1px solid var(--qcalendar-primary-color);
+      background: var(--socalendar-white-color);
+      border: 1px solid var(--socalendar-primary-color);
       line-height: 2.9;
     }
     
@@ -391,15 +391,15 @@
     }
     
     button.selected {
-      background: var(--qcalendar-primary-color);
-      color: var(--qcalendar-white-color);
+      background: var(--socalendar-primary-color);
+      color: var(--socalendar-white-color);
     }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .qcalendar, 
-  .qcalendar-inner {
+  .socalendar, 
+  .socalendar-inner {
     transition: none;
   }
 }
