@@ -1,8 +1,8 @@
-# qCalendar
+# soCalendar
 
-qCalendar is a beautiful & simple calendar date picker in TypeScript designed to be beautifully simple, intuitive and lightweight. It is build to be accessible and using modern semantic markup.
+soCalendar is a beautiful & simple calendar date picker in TypeScript designed to be beautifully simple, intuitive and lightweight. It is build to be accessible and using modern semantic markup.
 
-![qCalendar Preview](docs/qcalendar.png)
+![soCalendar Preview](docs/soqalendar.png)
 
 **Demo coming soon**
 
@@ -20,7 +20,7 @@ Built in TypeScript and using SCSS, it uses Vite to help build and test changes 
 
 ## Designer & Author
 
-qCalendar was designed and developed by Stewart Orr (https://www.stewartorr.co.uk).
+soCalendar was designed and developed by Stewart Orr (https://www.stewartorr.co.uk/socalendar).
 
 ## Credits
 
