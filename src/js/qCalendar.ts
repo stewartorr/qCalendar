@@ -18,7 +18,9 @@ export class qCalendar {
     private month: number = new Date().getMonth(),
     private day: number = new Date().getDay(),
     private date: Date = new Date(),
+    private selector: string = '.date-picker',
     private dateFormat: string = "DD/MM/YYYY",
+    private targetElement: HTMLInputElement,
     private today: Date = new Date(),
     private referenceDate: Date = new Date(1970, 0, 4),
     private weekDays: [string, string][],
@@ -61,6 +63,7 @@ export class qCalendar {
 		dialog.id = "qCalendar";
 		dialog.classList.add('qcalendar');
     dialog.innerHTML = ` 
+      <div class="qcalendar-backdrop"></div>
       <div class="qcalendar-inner">
         <div class="qcalendar-header">
           <div class="qcalendar-label-prev">
@@ -160,7 +163,7 @@ export class qCalendar {
   }
 
 	addListeners(): void {
-    const content: HTMLElement | null = document.getElementById("qCalendar-content");
+    const qCalendar = document.getElementById("qCalendar");
     const backCalendar = document.getElementById("qCalendar-back");
     const prevYear = document.getElementById("qCalendar-prev-year");
     const prevMonth = document.getElementById("qCalendar-prev-month");
@@ -171,7 +174,52 @@ export class qCalendar {
     const today = document.getElementById("qCalendar-today");
     const monthPicker = document.getElementById("qCalendar-label-month");
     const yearPicker = document.getElementById("qCalendar-label-year");
-    
+    const inputElements = document.querySelectorAll(this.selector);
+
+    // Watch for click outside the calendar, closeCalendar
+    document.addEventListener("pointerdown", (e) => {
+      if (!qCalendar) return;
+      if (!qCalendar.contains(e.target)) {
+        this.closeCalendar();
+      }
+    });
+
+    inputElements.forEach((input) => {
+      input.addEventListener('click', (event) => { 
+        const element = event.currentTarget as HTMLInputElement;
+        if (element && element.dataset.qcalendarTarget) {
+          const target = document.getElementById(element.dataset.qcalendarTarget);
+          if (target) {
+            target.classList.add('qcalendar-target');
+            this.targetElement = target;
+          }
+        } else {
+          input.classList.add('qcalendar-target');
+          this.targetElement = element;
+        }
+
+        // TODO ----------------------------------------------------------------
+        // Work out the date they have selected already and update our date
+        if (this.targetElement.type === 'date' && this.targetElement.value.trim() != '') {
+          this.date = new Date(this.targetElement.value);
+          this.year = this.date.getFullYear();
+          this.month = this.date.getMonth();
+          this.day = this.date.getDate();
+          console.log(this.date, this.year, this.month, this.day);
+          this.updateDate();
+          console.log(this.date, this.year, this.month, this.day);
+        } else {
+
+        }
+        alert(0);
+        this.generateDatePicker();
+        this.updateDate();
+        this.updateMonthLabel();
+        this.updateYearLabel();
+        qCalendar.showModal();
+      });
+    });
+
     // Back button show when picking a month or year
     if (backCalendar instanceof HTMLButtonElement) backCalendar.addEventListener('click', () => {
       this.generateDatePicker();
@@ -225,30 +273,41 @@ export class qCalendar {
     
     // Open year picker
     if (yearPicker instanceof HTMLButtonElement) yearPicker.addEventListener('click', () => { 
-      this.generateYearPicker() 
+      this.generateYearPicker();
     });
   }
 
   private setDate(date: Date): void {
-    alert(date.toLocaleDateString(this.locale));
+    console.log(this.targetElement);
+    if (this.targetElement.type == 'date') {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      this.targetElement.value = `${yyyy}-${mm}-${dd}`;
+    } else {
+      this.targetElement.value = date.toLocaleDateString(this.locale);
+    }
     this.closeCalendar();
   }
 
   closeCalendar(): void {
     const qCalendar = document.getElementById('qCalendar');
-    if (qCalendar instanceof HTMLElement) {
-      qCalendar.addEventListener('transitionend', () => {
-        qCalendar.classList.remove('qcalendar-visible');
-      });
-      qCalendar.classList.remove('qcalendar-loaded');
+    if (qCalendar instanceof HTMLDialogElement) {
+      qCalendar.close();
     }
   }
 
+  isOpen(): bool {
+    const qCalendar = document.getElementById('qCalendar');
+    return (qCalendar && qCalendar.classList.contains('qcalendar-loaded'));
+  }
+
   show(): void {
+    if (this.isOpen()) return;
     const qCalendar = document.getElementById('qCalendar');
     if (qCalendar instanceof HTMLElement) {
-      qCalendar.classList.add('qcalendar-visible', 'qcalendar-loaded');
-    }
+      qCalendar.classList.add('qcalendar-loaded');
+    }    
   }
 
   private toggleElements(ids: string[], hide: bool = false, cssclass: string = 'qcalendar-hidden'): void {
@@ -258,7 +317,7 @@ export class qCalendar {
     });
   }
 
-  private generateYearPicker(year: number | null): void {
+  private generateYearPicker(year?: number | null): void {
     const div: HTMLElement | null = document.getElementById("qCalendar-content");
     if (!div) return;
 
@@ -279,7 +338,7 @@ export class qCalendar {
     <div class="qcalendar-year-picker">
       <div class="qcalendar-year-picker-scroller">
         <button type="button" id="qCalendar-decade-prev">${this.iconPreviousMonth}</button>
-        <span class="qcalendar-year-picker-label">${decadeStart}</span>
+        <span class="qcalendar-year-picker-label">${decadeStart} &ndash; ${decadeStart+9}</span>
         <button type="button" id="qCalendar-decade-next">${this.iconNextMonth}</button>
       </div>
       <ol class="qcalendar-year-picker">
