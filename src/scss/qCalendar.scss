@@ -1,0 +1,403 @@
+/*------------------------------------------------------------------------------
+> qCalendar
+------------------------------------------------------------------------------*/
+
+.qcalendar-target::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+.qcalendar-target[type="date"] {
+  /* appearance controls styling */
+  appearance: textfield;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+}
+
+.qcalendar {
+  --qcalendar-bg-color: #fff;
+  --qcalendar-border-radius: 20px;
+  --qcalendar-primary-color: #099ba4;
+  --qcalendar-primary-color-light: #E7F8F7;
+  --qcalendar-primary-color-hover: #CEF0EF;
+  --qcalendar-secondary-color: #495057;
+  --qcalendar-white-color: #fff;
+  --qcalendar-dark-color: #161616;
+  --qcalendar-gray-color: #999;
+  --qcalendar-backdrop: rgba(9, 155, 164, 0.25);
+  
+  background: var(--qcalendar-bg-color);
+  border-radius: var(--qcalendar-border-radius);
+  border: 0;
+  box-shadow: 0 1em 5em rgba(0, 0, 0, 0.25);
+  display: block;
+  left: 50%;
+  min-height: 440px;
+  padding: 25px;
+  position: fixed;
+  top: 50%;
+  transform-origin: 0 0;
+  transform: scale(0.2) translate3d(-50%, -50%, 0);
+  transition: all 0.15s ease-out;
+  visibility: hidden;
+  z-index: 1001;
+  
+  &::backdrop {
+    background: var(--qcalendar-backdrop);
+    transition: all 0.5s ease;
+    
+    @starting-style {
+      background: rgba(0, 0, 0, 0);
+    }
+  }
+
+  .qcalendar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  // When it's loaded
+  &[open] {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translate3d(-50%, -50%, 0);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    
+    .qcalendar-inner {
+      opacity: 1;
+      transform: scale(1);
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.15s;
+    }
+  }
+  
+  
+  // Utility classes
+  &.qcalendar-visible {
+    display: block;
+  }
+  
+  .qcalendar-hidden {
+    display: none !important;
+  }
+  
+  .qcalendar-visually-hidden {
+    border: 0;
+    clip-path: inset(50%);
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+  
+  .qcalendar-year-picker-scroller,
+  .qcalendar-header,
+  .qcalendar-footer {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+    
+    .qcalendar-label-prev,
+    .qcalendar-label-next {
+      align-items: center;
+      display: flex;
+      height: 32px;
+      width: 64px;
+    }
+    
+    button {
+      background: none;
+      border: 0;
+      color: var(--qcalendar-gray-color);
+      cursor: pointer;
+      line-height: 1;
+      margin: 0;
+      opacity: 1;
+      padding: 0;
+      transition: color 0.15s ease;
+      will-change: color;
+      
+      &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      
+      &:not([disabled]):hover {
+        color: var(--qcalendar-secondary-color);
+      }
+      
+      &.qcalendar-back {
+        opacity: 1;
+        transition: 0.15s ease 0.15s;
+        
+        @starting-style {
+          opacity: 0;
+          transform: translateX(5px);
+        }
+      }
+      
+      &.qcalendar-button-label {
+        height: 1.7em;
+        overflow: hidden;
+        position: relative;
+        width: 50%;
+        
+        &#qCalendar-label-month {
+          color: var(--qcalendar-dark-color);
+          text-align: right;
+        }
+        
+        &#qCalendar-label-year {
+          text-align: left;
+        }
+        
+        &::before {
+          content: "";
+          position: absolute;
+          box-shadow: 0 6px 6px -4px var(--qcalendar-bg-color) inset, 
+          0 -6px 6px -4px var(--qcalendar-bg-color) inset;
+          inset: 0;
+          z-index: 1;
+        }
+        
+        span {
+          display: flex;
+          flex-flow: column nowrap;
+          height: 1.7em;
+          justify-content: center;
+          line-height: 1.7em;
+          transform: translate3d(0, 0, 0);
+          transition: all 0.15s ease;
+          
+          &:before,
+          &:after {
+            height: 1.7em;
+          }
+          
+          &:before {
+            content: attr(data-before);
+          }
+          
+          &:after {
+            content: attr(data-after);
+          }
+        }
+        
+        &.next span {
+          transform: translate3d(0, -1.7em, 0);
+        }
+        
+        &.prev span {
+          transform: translate3d(0, 1.7em, 0);
+        }
+      }
+    }
+  }
+  
+  .qcalendar-label {
+    align-items: center;
+    color: var(--qcalendar-secondary-color);
+    display: flex;
+    flex-flow: row nowrap;
+    flex-grow: 1;
+    font-size: 22px;
+    gap: 5px;
+    justify-content: center;
+    justify-self: stretch;
+    
+    button {
+      color: inherit;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  
+  .qcalendar-content-wrapper {
+    max-width: 350px;
+    overflow: visible;
+  }
+  
+  .qcalendar-content-inner {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+  }
+  
+  .qcalendar-content {
+    display: flex;
+    flex: 0 0 100%;
+    transition: none;
+    width: 350px;
+    
+    table {
+      border: 0;
+      margin: 0;			
+      th {
+        color: var(--qcalendar-gray-color);
+        font-weight: normal;
+        font-size: 12px;;
+        padding: 0.5em 0.33em;
+      }
+      
+      th abbr {
+        text-decoration: none;
+      }
+      
+      td {
+        text-align: center;
+        border: 1px solid var(--qcalendar-white-color);
+      }
+    }
+    
+    .qcalendar-month-picker,
+    .qcalendar-year-picker {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-flow: row wrap;
+      gap: 4px;
+      width: 100%;
+      
+      li {
+        flex: 0 0 calc(33.333% - 4px);
+        
+        button {
+          height: 92px;
+          line-height: 92px;
+          width: 100%;
+          opacity: 1;
+          transition: 0.35s;
+          
+          @starting-style {
+            opacity: 0;
+          }
+        }
+        
+        
+        &:nth-child(n + 4):nth-child(-n + 6) button {
+          transition-delay: 0.1s;
+        }
+        
+        &:nth-child(n + 7):nth-child(-n + 9) button {
+          transition-delay: 0.2s;
+        }
+        
+        &:nth-child(n + 10):nth-child(-n + 12) button {
+          transition-delay: 0.3s;
+        }
+      }
+    }
+    
+    .qcalendar-year-picker {
+      li {
+        flex: 0 0 calc(50% - 4px);
+        
+        button {
+          height: 60px;
+          line-height: 60px;
+        }
+        
+        &:nth-child(n + 3):nth-child(-n + 4) button {
+          transition-delay: 0.1s;
+        }
+        
+        &:nth-child(n + 5):nth-child(-n + 6) button {
+          transition-delay: 0.2s;
+        }
+        
+        &:nth-child(n + 7):nth-child(-n + 8) button {
+          transition-delay: 0.3s;
+        }
+        
+        &:nth-child(n + 9):nth-child(-n + 10) button {
+          transition-delay: 0.4s;
+        }
+        
+      }
+    }
+    
+    .qcalendar-year-picker-scroller {
+      border-radius: 6px;
+      padding: 10px;
+      border: 1px solid var(--qcalendar-gray-color);
+      margin-bottom: 10px;
+      flex: 0 1 100%;
+      width: 100%;
+      
+      .qcalendar-year-picker-label {
+        font-size: 20px;
+      }
+    }
+    
+    button.qcalendar-button {
+      box-sizing: border-box;
+      background: var(--qcalendar-primary-color-light);
+      border: 0;
+      border-radius: 0.33em;
+      color: var(--qcalendar-primary-color);
+      cursor: pointer;
+      display: block;
+      font-size: 16px;
+      font-weight: 400;
+      transition: background 0.1s ease;
+      will-change: background;
+      
+      &:not([disabled]):hover {
+        background: var(--qcalendar-primary-color-hover);
+      }
+    }
+    
+    table.qcalendar-date-picker {
+      button {
+        height: 3em;
+        line-height: 3;
+        width: 3em;
+      }
+    }
+    
+    button[disabled] {
+      background: #eee;
+      color: #999;
+      cursor: not-allowed;
+      font-weight: normal;
+    }
+    
+    button.isToday {
+      background: var(--qcalendar-white-color);
+      border: 1px solid var(--qcalendar-primary-color);
+      line-height: 2.9;
+    }
+    
+    button.outsideMonth {
+      background-image: repeating-linear-gradient(-45deg, #ddd, #ddd 1px, #fff 1px, #fff 5px);
+      color: #aaa;
+      font-weight: 300;
+    }
+    
+    button.selected {
+      background: var(--qcalendar-primary-color);
+      color: var(--qcalendar-white-color);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qcalendar, 
+  .qcalendar-inner {
+    transition: none;
+  }
+}
