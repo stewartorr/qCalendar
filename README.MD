@@ -2,7 +2,7 @@
 
 soCalendar is a beautiful & simple calendar date picker in TypeScript designed to be beautifully simple, intuitive and lightweight. It is build to be accessible and using modern semantic markup.
 
-![soCalendar Preview](docs/soqalendar.png)
+![soCalendar Preview](docs/socalendar.png)
 
 **Demo coming soon**
 
