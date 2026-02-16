@@ -28,7 +28,6 @@ export class qCalendar {
   ) {}
 
 	private getMonthName(month: number, format: MonthFormat = 'short'): string {
-    // console.log(month, format);
 		return new Intl.DateTimeFormat(this.locale, {
 			month: format,
 		}).format(new Date(2000, month, 1));
@@ -162,6 +161,70 @@ export class qCalendar {
     }
   }
 
+  private parseDateString(value: string): Date | false {
+    if (!value) return false;
+
+    // Normalize separator (allow / or -)
+    const parts = value.split(/[\/\-]/);
+
+    if (parts.length !== 3) return false;
+
+    let day: number;
+    let month: number;
+    let year: number;
+
+    switch (this.dateFormat) {
+      case "DD/MM/YYYY":
+        day = Number(parts[0]);
+        month = Number(parts[1]);
+        year = Number(parts[2]);
+        break;
+
+      case "MM/DD/YYYY":
+        month = Number(parts[0]);
+        day = Number(parts[1]);
+        year = Number(parts[2]);
+        break;
+
+      case "YYYY/MM/DD":
+        year = Number(parts[0]);
+        month = Number(parts[1]);
+        day = Number(parts[2]);
+        break;
+
+      default:
+        return false;
+    }
+
+    // Basic numeric validation
+    if (
+      !Number.isInteger(day) ||
+      !Number.isInteger(month) ||
+      !Number.isInteger(year)
+    ) {
+      return false;
+    }
+
+    // Basic range checks
+    if (year < 1000 || year > 9999) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    // Create date
+    const date = new Date(year, month - 1, day);
+
+    // Strict validation (prevents rollover issues)
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return false;
+    }
+
+    return date;
+  }
+
 	addListeners(): void {
     const qCalendar = document.getElementById("qCalendar");
     const backCalendar = document.getElementById("qCalendar-back");
@@ -202,18 +265,19 @@ export class qCalendar {
         // Work out the date they have selected already and update our date
         if (this.targetElement.type === 'date' && this.targetElement.value.trim() != '') {
           this.date = new Date(this.targetElement.value);
-          this.year = this.date.getFullYear();
-          this.month = this.date.getMonth();
-          this.day = this.date.getDate();
-          console.log(this.date, this.year, this.month, this.day);
-          this.updateDate();
-          console.log(this.date, this.year, this.month, this.day);
         } else {
-
+          const currentDate = this.parseDateString(this.targetElement.value.trim());
+          if (currentDate instanceof Date) {
+            this.date = currentDate;
+          } else {
+            this.date = this.today;
+          }
         }
-        alert(0);
-        this.generateDatePicker();
+        this.year = this.date.getFullYear();
+        this.month = this.date.getMonth();
+        this.day = this.date.getDate();
         this.updateDate();
+        this.generateDatePicker();
         this.updateMonthLabel();
         this.updateYearLabel();
         qCalendar.showModal();
@@ -278,7 +342,6 @@ export class qCalendar {
   }
 
   private setDate(date: Date): void {
-    console.log(this.targetElement);
     if (this.targetElement.type == 'date') {
       const yyyy = date.getFullYear();
       const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -448,11 +511,6 @@ export class qCalendar {
       'qCalendar-next-year'
     ], false);
 
-    const today = new Date();
-    const todayY = today.getFullYear();
-    const todayM = today.getMonth();
-    const todayD = today.getDate();
-
     const div: HTMLElement | null = document.getElementById(`qCalendar-content`);
     if (!div) return;
     
@@ -481,7 +539,7 @@ export class qCalendar {
       month: number;
       year: number;
       outside: boolean;
-      isToday: boolean;
+      isCurrent: boolean;
     }[] = [];
 
     for (let i = 0; i < totalCells; i++) {
@@ -507,12 +565,12 @@ export class qCalendar {
         day = i - startDay + 1;
       }
 
-      const isToday =
-        day === todayD &&
-        month === todayM &&
-        year === todayY;
+      const isCurrent =
+        day === this.day &&
+        month === this.month &&
+        year === this.year;
 
-      days.push({ day, month, year, outside, isToday });
+      days.push({ day, month, year, outside, isCurrent });
     }
 
     div.insertAdjacentHTML('beforeend', `
@@ -533,7 +591,7 @@ export class qCalendar {
                 "qcalendar-button",
                 "qCalendar-select-date",
                 cell.outside ? "outsideMonth" : "",
-                cell.isToday ? "isToday" : ""
+                cell.isCurrent ? "isCurrent" : ""
               ].filter(Boolean).join(" ");
 
               return `
