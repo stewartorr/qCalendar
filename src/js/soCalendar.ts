@@ -11,6 +11,8 @@ interface SoCalendarOptions {
   iconToday?: string;
   iconCancel?: string;
   iconConfirm?: string;
+  iconPreviousDecade?: string;
+  iconNextDecade?: string;
   locale?: string;
   minDate?: Date;
   maxDate?: Date;
@@ -22,6 +24,9 @@ interface SoCalendarOptions {
 export class soCalendar {
   private dialog!: HTMLDialogElement;
   private content!: HTMLElement;
+  private contentPrev!: HTMLElement;
+  private contentCurrent!: HTMLElement;
+  private contentNext!: HTMLElement;
   private monthLabel!: HTMLButtonElement;
   private yearLabel!: HTMLButtonElement;
   private todayBtn!: HTMLButtonElement;
@@ -45,6 +50,8 @@ export class soCalendar {
   private iconToday!: string;
   private iconCancel!: string;
   private iconConfirm!: string;
+  private iconPreviousDecade!: string;
+  private iconNextDecade!: string;
 
   private locale?: string;
   private date: Date = new Date();
@@ -71,6 +78,8 @@ export class soCalendar {
     iconToday: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-64-56a16,16,0,1,1-16-16A16,16,0,0,1,144,152Z"></path></svg>`,
     iconCancel: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg>`,
     iconConfirm: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"></path></svg>`,
+    iconNextDecade: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M213.66,165.66a8,8,0,0,1-11.32,0L128,91.31,53.66,165.66a8,8,0,0,1-11.32-11.32l80-80a8,8,0,0,1,11.32,0l80,80A8,8,0,0,1,213.66,165.66Z"></path></svg>`,
+    iconPreviousDecade: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>`,
     selector: '.date-picker',
     locale: 'en-GB',
     minDate: undefined as unknown as Date,
@@ -112,7 +121,11 @@ export class soCalendar {
           </div>
         </div>
         <div class="socalendar-content-wrapper">
-          <div id="soCalendar-content" class="socalendar-content" aria-live="polite"></div>
+          <div id="soCalendar-content" class="socalendar-content-inner" aria-live="polite">
+            <div id="soCalendar-content-prev" class="socalendar-content"></div>
+            <div id="soCalendar-content-current" class="socalendar-content"></div>
+            <div id="soCalendar-content-next" class="socalendar-content"></div>
+          </div>
         </div>
         <div id="soCalendar-footer" class="socalendar-row">
           <button id="soCalendar-cancel" class="socalendar-button" type="button">${this.iconCancel}</button>
@@ -123,6 +136,9 @@ export class soCalendar {
     document.body.appendChild(dialog);
     this.dialog = dialog;
     this.content = dialog.querySelector("#soCalendar-content")!;
+    this.contentPrev = dialog.querySelector("#soCalendar-content-prev")!;
+    this.contentCurrent = dialog.querySelector("#soCalendar-content-current")!;
+    this.contentNext = dialog.querySelector("#soCalendar-content-next")!;
     this.monthLabel = dialog.querySelector("#soCalendar-label-month")!;
     this.yearLabel = dialog.querySelector("#soCalendar-label-year")!;
     this.todayBtn = dialog.querySelector("#soCalendar-today")!;
@@ -175,7 +191,11 @@ export class soCalendar {
   }
 
   updateMonth(change: number): void {
+    const newDate = new Date(this.year, this.month + change, this.day);
     const classToggle = change > 0 ? 'next' : 'prev' ;
+    if (this.minDate instanceof Date && newDate < this.minDate || this.maxDate instanceof Date && newDate > this.maxDate) {
+      return;
+    }
     
     if (this.month + change < 0) {
       this.month = 11;
@@ -186,17 +206,8 @@ export class soCalendar {
     } else {
       this.month += change;
     }
-
-    this.updateDate();
-    this.generateDatePicker();
-
-    if (this.monthLabel instanceof HTMLButtonElement) {
-      this.monthLabel.addEventListener('transitionend', () => {
-        this.monthLabel.classList.remove(classToggle);
-        this.updateMonthLabel();
-      });
-      this.monthLabel.classList.add(classToggle);
-    }
+    this.content.classList.add(classToggle);
+    this.monthLabel.classList.add(classToggle);
   }
 
   updateYearLabel() {
@@ -204,25 +215,45 @@ export class soCalendar {
   }
 
   updateYear(change: number): void {
-    // TODO: Check if allowed
     const classToggle = change > 0 ? 'next' : 'prev' ;
+    const newDate = new Date(this.year + change, this.month, this.day);
+    if (this.minDate instanceof Date && newDate < this.minDate || this.maxDate instanceof Date && newDate > this.maxDate) {
+      return;
+    }
+
+    this.yearLabel.classList.add(classToggle);
+    this.content.classList.add(classToggle);
     this.year += change;
     this.generateDatePicker();
-    if (this.yearLabel instanceof HTMLButtonElement) {
-      this.yearLabel.addEventListener('transitionend', () => {
-        this.yearLabel.classList.remove(classToggle);
-        this.updateDate();
-        this.updateYearLabel()
-      });
-      this.yearLabel.classList.add(classToggle);
-    }
   }
 
   private updateDate() {
-    this.date = new Date(this.year, this.month, this.day);
+    // this.date = new Date(this.year, this.month, this.day);
     if (this.todayBtn instanceof HTMLButtonElement) {
       this.todayBtn.disabled = !(this.date.getFullYear() != this.today.getFullYear() ||  this.date.getMonth() != this.today.getMonth());
     }
+
+
+/////////////////
+///////////////// This is slow to react, move it somehwere
+/////////////////
+/////////////////
+
+    // Check prev/next buttons to see if they are within minDate/maxDate
+    const min = this.minDate instanceof Date ? this.minDate : null;
+    const max = this.maxDate instanceof Date ? this.maxDate : null;
+
+    // Targets you'd navigate to (choose a consistent convention)
+    const prevMonthTarget = new Date(this.year, this.month, 0); // 1st of prev month
+    const nextMonthTarget = new Date(this.year, this.month + 1, 1); // 1st of next month
+    const prevYearTarget  = new Date(this.year - 1, this.month, 1);
+    const nextYearTarget  = new Date(this.year + 1, this.month, 1);
+
+    this.prevMonthBtn.disabled = !!min && prevMonthTarget < this.minDate;
+    this.nextMonthBtn.disabled = !!max && nextMonthTarget > this.maxDate;
+
+    this.prevYearBtn.disabled  = !!min && prevYearTarget < this.minDate;
+    this.nextYearBtn.disabled  = !!max && nextYearTarget > this.maxDate;
   }
 
   private parseDateString(value: string): Date | false {
@@ -291,7 +322,6 @@ export class soCalendar {
 
 	addListeners(): void {
     const inputElements = document.querySelectorAll(this.selector);
-    console.log(`Found ${inputElements.length} elements for selector "${this.selector}"`, inputElements);
     inputElements.forEach((input) => {
       input.addEventListener('click', (event) => {
         const element = event.currentTarget as HTMLInputElement | HTMLButtonElement;
@@ -345,48 +375,68 @@ export class soCalendar {
       });
     });
 
+    // Transitions
+    this.content.addEventListener('transitionend', (e) => {
+      if (e.target !== this.content) return;
+      this.content.classList.remove('next', 'prev');
+      this.updateDate();
+      this.generateDatePicker();
+    }, );
+
+    // Trigger animation for month label
+    this.monthLabel.addEventListener('transitionend', () => {
+      this.monthLabel.classList.remove('next', 'prev');
+      this.updateMonthLabel();
+    });
+
+    // Trigger animation for month label
+    this.yearLabel.addEventListener('transitionend', () => {
+      this.yearLabel.classList.remove('next', 'prev');
+      this.updateYearLabel()
+    });
+
     // Back button show when picking a month or year
-    if (this.backBtn instanceof HTMLButtonElement) this.backBtn.addEventListener('click', () => {
+    this.backBtn.addEventListener('click', () => {
       this.generateDatePicker();
     });
     
     // When click to edit date, show date input
-    if (this.editBtn instanceof HTMLButtonElement) this.editBtn.addEventListener('click', () => {
+    this.editBtn.addEventListener('click', () => {
       this.generateDateInput();
     });
     
     // Go to previous year
-    if (this.prevYearBtn instanceof HTMLButtonElement) this.prevYearBtn.addEventListener('click', () => { 
+    this.prevYearBtn.addEventListener('click', () => { 
       this.updateYear(-1) 
     });
     
     // Go to previous month
-    if (this.prevMonthBtn instanceof HTMLButtonElement) this.prevMonthBtn.addEventListener('click', () => { 
+    this.prevMonthBtn.addEventListener('click', () => { 
       this.updateMonth(-1) 
     });
     
     // Go to next month
-    if (this.nextMonthBtn instanceof HTMLButtonElement) this.nextMonthBtn.addEventListener('click', () => { 
+    this.nextMonthBtn.addEventListener('click', () => { 
       this.updateMonth(1) 
     });
     
     // Go to next year
-    if (this.nextYearBtn instanceof HTMLButtonElement) this.nextYearBtn.addEventListener('click', () => { 
+    this.nextYearBtn.addEventListener('click', () => { 
       this.updateYear(1); 
     });
     
     // Close calendar
-    if (this.cancelBtn instanceof HTMLButtonElement) this.cancelBtn.addEventListener('click', () => { 
+    this.cancelBtn.addEventListener('click', () => { 
       this.closeCalendar() 
     });
     
     // Confirm calendar selection TODO
-    if (this.confirmBtn instanceof HTMLButtonElement) this.confirmBtn.addEventListener('click', () => { 
+    this.confirmBtn.addEventListener('click', () => { 
       this.closeCalendar() 
     });
     
     // Update calendar picker to today
-    if (this.todayBtn instanceof HTMLButtonElement) this.todayBtn.addEventListener('click', () => {
+    this.todayBtn.addEventListener('click', () => {
       this.year = this.today.getFullYear();
       this.month = this.today.getMonth();
       this.day = this.today.getDate(); 
@@ -397,12 +447,13 @@ export class soCalendar {
     });
     
     // Open month picker
-    if (this.monthLabel instanceof HTMLButtonElement) this.monthLabel.addEventListener('click', () => { 
+    this.monthLabel.addEventListener('click', () => { 
       this.generateMonthPicker();
     });
     
     // Open year picker
-    if (this.yearLabel instanceof HTMLButtonElement) this.yearLabel.addEventListener('click', () => { 
+    this.yearLabel.addEventListener('click', () => {
+      console.log('year picker clicked')
       this.generateYearPicker();
     });
   }
@@ -503,7 +554,7 @@ export class soCalendar {
   private generateDateInput(): void {
     this.toggleElements(['soCalendar-back'], false);
     this.toggleElements(['soCalendar-edit'], true);
-    this.content.innerHTML = `
+    this.contentCurrent.innerHTML = `
       <div class="socalendar-date-editor socalendar-row">
         <input class="socalendar-input" id="soCalendar-input" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="10" placeholder="${this.dateFormat}" mask="0000-00-00" />
         <button type="button" disabled id="soCalendar-date-confirm" class="socalendar-input-button ">${this.iconConfirm}</button>
@@ -549,82 +600,7 @@ export class soCalendar {
     });
   }
 
-
-  private generateYearPicker(year?: number | null): void {
-    if (!year) year = this.year;
-
-    this.toggleElements(['soCalendar-back', 'soCalendar-edit'], false);
-    this.toggleElements(['soCalendar-footer', 
-      'soCalendar-content-month',
-      'soCalendar-prev-year',
-      'soCalendar-prev-month',
-      'soCalendar-next-month',
-      'soCalendar-next-year'
-    ], true);    
-
-    const decadeStart = Math.floor(year / 10) * 10;
-
-    this.content.innerHTML = `
-    <div class="socalendar-year-picker">
-      <div class="socalendar-year-picker-scroller socalendar-row">
-        <button type="button" id="soCalendar-decade-prev">${this.iconPreviousMonth}</button>
-        <span class="socalendar-year-picker-label">${decadeStart} &ndash; ${decadeStart+9}</span>
-        <button type="button" id="soCalendar-decade-next">${this.iconNextMonth}</button>
-      </div>
-      <ol class="socalendar-year-picker">
-        ${Array.from({ length: 10 }, (_, i) => {
-          const year = decadeStart + i;
-          return `
-            <li>
-              <button type="button" class="socalendar-button ${this.year === year?"selected":""} socalendar-select-year" data-year="${year}">
-                ${year}
-              </button>
-            </li>
-          `;
-        }).join("")}
-      </ol>
-    </div>
-  `;
-
-    // Add button event listeners
-    const prevDecade = document.getElementById('soCalendar-decade-prev');
-    const nextDecade = document.getElementById('soCalendar-decade-next');
-
-    if (prevDecade instanceof HTMLButtonElement) {
-      prevDecade.addEventListener('click', (event) => {
-        // this.year-=10;
-        // this.updateDate();
-        this.generateYearPicker(decadeStart - 10);
-      });
-    }
   
-    if (nextDecade instanceof HTMLButtonElement) {
-      nextDecade.addEventListener('click', (event) => {
-        // this.year+=10;
-        // this.updateDate();
-        this.generateYearPicker(decadeStart + 10);
-      });
-    }
-
-    // Add button event listeners
-    const calendarButtons = this.dialog.querySelectorAll<HTMLButtonElement>("#soCalendar button.socalendar-select-year");
-    calendarButtons.forEach((b) => {
-      b.addEventListener('click', (event) => {
-        const button = event.currentTarget;
-        if (button instanceof HTMLButtonElement) {
-          const year = Number(button.dataset.year);
-          if (year) {
-            this.year = year;
-            this.updateDate();
-            this.updateYearLabel();
-            this.generateMonthPicker();
-          }
-        }
-      });
-    });
-  }
-
-
   private applyMask = (event: Event): void => {
     const confirm = document.getElementById('soCalendar-date-confirm') as HTMLButtonElement;
     const maskPattern = "00/00/0000";
@@ -680,8 +656,80 @@ export class soCalendar {
     confirm.disabled = maskedValue.length !== maskPattern.length;
   }
 
+  private generateYearPicker(year?: number | null): void {
+    if (!year) year = this.year;
+
+    this.content.classList.remove('next', 'prev');
+    this.toggleElements(['soCalendar-back', 'soCalendar-edit'], false);
+    this.toggleElements(['soCalendar-footer', 
+      'soCalendar-content-month',
+      'soCalendar-prev-year',
+      'soCalendar-prev-month',
+      'soCalendar-next-month',
+      'soCalendar-next-year'
+    ], true);    
+
+    
+    const decadeStart = Math.floor(year / 10) * 10;
+    this.contentCurrent.innerHTML = `
+    <div class="socalendar-year-picker">
+      <div class="socalendar-year-picker-scroller socalendar-row">
+        <button type="button" id="soCalendar-decade-prev">${this.iconPreviousDecade}</button>
+        <span class="socalendar-year-picker-label">${decadeStart}&ndash; ${decadeStart+9}</span>
+        <button type="button" id="soCalendar-decade-next">${this.iconNextDecade}</button>
+      </div>
+      <ol class="socalendar-year-picker">
+        ${Array.from({ length: 10 }, (_, i) => {
+          const year = decadeStart + i;
+          return `
+            <li>
+              <button type="button" class="socalendar-button ${this.year === year?"selected":""} socalendar-select-year" data-year="${year}">
+                ${year}
+              </button>
+            </li>
+          `;
+        }).join("")}
+      </ol>
+    </div>
+    `;
+
+    // Add button event listeners
+    const prevDecade!: HTMLButtonElement = document.getElementById('soCalendar-decade-prev');
+    const nextDecade!: HTMLButtonElement = document.getElementById('soCalendar-decade-next');
+
+    prevDecade.addEventListener('click', () => {
+      this.year-=10;
+      this.updateDate();
+      this.generateYearPicker(decadeStart - 10);
+    });
+  
+    nextDecade.addEventListener('click', () => {
+      this.year+=10;
+      this.updateDate();
+      this.generateYearPicker(decadeStart + 10);
+    });
+    
+    // Add button event listeners
+    const calendarButtons = this.dialog.querySelectorAll<HTMLButtonElement>("#soCalendar button.socalendar-select-year");
+    calendarButtons.forEach((b) => {
+      b.addEventListener('click', (event) => {
+        const button = event.currentTarget;
+        if (button instanceof HTMLButtonElement) {
+          const year = Number(button.dataset.year);
+          if (year) {
+            this.year = year;
+            this.updateDate();
+            this.updateYearLabel();
+            this.generateMonthPicker();
+          }
+        }
+      });
+    });
+  }
+
   // This updates the main calendar content area to show month picker
   private generateMonthPicker():void {
+    this.content.classList.remove('next', 'prev');
     this.toggleElements(['soCalendar-back', 'soCalendar-edit'], false);
     this.toggleElements(['soCalendar-footer', 
       'soCalendar-prev-year',
@@ -690,7 +738,7 @@ export class soCalendar {
       'soCalendar-next-year'
     ], true);
     
-    this.content.innerHTML = `<ol class="socalendar-month-picker">
+    this.contentCurrent.innerHTML = `<ol class="socalendar-month-picker">
       ${[0,1,2,3,4,5,6,7,8,9,10,11]
       .map(i => `
         <li>
@@ -708,7 +756,10 @@ export class soCalendar {
       button.addEventListener('click', (event) => {
         const button = event.currentTarget;
         if (button instanceof HTMLButtonElement) {
-          const month = Number(button.dataset.month);
+          console.log('buttn ok');
+
+        const month = Number(button.dataset.month);
+          console.log(month);
           if (month) {
             this.month = month;
             this.updateDate();
@@ -734,120 +785,130 @@ export class soCalendar {
     const todayY = this.today.getFullYear();
     const todayM = this.today.getMonth();
     const todayD = this.today.getDate();
-    
-    this.content.innerHTML = '';
 
-    // Compute correct month/year for this iteration
-    const baseDate = new Date(this.year, this.month, 1);
-    const viewYear = baseDate.getFullYear();
-    const viewMonth = baseDate.getMonth();
+    const targets: HTMLElement[] = [this.contentPrev, this.contentCurrent, this.contentNext];
 
-    const firstDayOfMonth = new Date(viewYear, viewMonth, 1);
-    const monthDays = this.daysInMonth(viewYear, viewMonth);
+    for (let offset = -1; offset <= 1; offset++) {
 
-    let startDay = firstDayOfMonth.getDay();
-    if (this.weekStartsOnMonday) startDay = (startDay + 6) % 7;
+      // Compute correct month/year for this iteration
+      const baseDate = new Date(this.year, this.month + offset, 1);
+      const viewYear = baseDate.getFullYear();
+      const viewMonth = baseDate.getMonth();
 
-    const prevMonthDate = new Date(viewYear, viewMonth - 1, 1);
-    const prevMonth = prevMonthDate.getMonth();
-    const prevYear = prevMonthDate.getFullYear();
-    const prevMonthDays = this.daysInMonth(prevYear, prevMonth);
+      const firstDayOfMonth = new Date(viewYear, viewMonth, 1);
+      const monthDays = this.daysInMonth(viewYear, viewMonth);
 
-    const totalCells = 6 * 7;
+      let startDay = firstDayOfMonth.getDay();
+      if (this.weekStartsOnMonday) startDay = (startDay + 6) % 7;
 
-    const days: {
-      day: number;
-      month: number;
-      year: number;
-      outside: boolean;
-      isToday: boolean;
-      isCurrent: boolean;
-      isDisabled: boolean;
-    }[] = [];
+      const prevMonthDate = new Date(viewYear, viewMonth - 1, 1);
+      const prevMonth = prevMonthDate.getMonth();
+      const prevYear = prevMonthDate.getFullYear();
+      const prevMonthDays = this.daysInMonth(prevYear, prevMonth);
 
-    for (let i = 0; i < totalCells; i++) {
-      let day: number;
-      let month = viewMonth;
-      let year = viewYear;
-      let outside = false;
+      const totalCells = 6 * 7;
 
-      if (i < startDay) {
-        day = prevMonthDays - startDay + i + 1;
-        month = prevMonth;
-        year = prevYear;
-        outside = true;
+      const days: {
+        day: number;
+        month: number;
+        year: number;
+        outside: boolean;
+        isToday: boolean;
+        isCurrent: boolean;
+        isDisabled: boolean;
+        isMinDate: boolean;
+        isMaxDate: boolean;
+      }[] = [];
 
-      } else if (i >= startDay + monthDays) {
-        const nextMonthDate = new Date(viewYear, viewMonth + 1, 1);
-        day = i - (startDay + monthDays) + 1;
-        month = nextMonthDate.getMonth();
-        year = nextMonthDate.getFullYear();
-        outside = true;
+      for (let i = 0; i < totalCells; i++) {
+        let day: number;
+        let month = viewMonth;
+        let year = viewYear;
+        let outside = false;
 
-      } else {
-        day = i - startDay + 1;
+        if (i < startDay) {
+          day = prevMonthDays - startDay + i + 1;
+          month = prevMonth;
+          year = prevYear;
+          outside = true;
+
+        } else if (i >= startDay + monthDays) {
+          const nextMonthDate = new Date(viewYear, viewMonth + 1, 1);
+          day = i - (startDay + monthDays) + 1;
+          month = nextMonthDate.getMonth();
+          year = nextMonthDate.getFullYear();
+          outside = true;
+
+        } else {
+          day = i - startDay + 1;
+        }
+
+        // If the current cell is todays date, mark it as today
+        const isToday =
+          day === todayD &&
+          month === todayM &&
+          year === todayY;
+
+        // If the current cell is the selected date, mark it as current
+        const isCurrent =
+          day === this.day &&
+          month === this.month &&
+          year === this.year;
+
+        const isDisabled = (this.minDate && new Date(year, month, day) < this.minDate || this.maxDate && new Date(year, month, day) > this.maxDate);
+        
+        const isMinDate = this.minDate instanceof Date && new Date(year, month, day).getTime() === this.minDate.getTime();
+        const isMaxDate = this.maxDate instanceof Date && new Date(year, month, day).getTime() === this.maxDate.getTime();
+
+        days.push({ day, month, year, outside, isToday, isCurrent, isDisabled, isMinDate, isMaxDate });
       }
 
-      // If the current cell is todays date, mark it as today
-      const isToday =
-        day === todayD &&
-        month === todayM &&
-        year === todayY;
+      targets[offset + 1].innerHTML = `
+        <table class="socalendar-date-picker" cellpadding="0" cellspacing="0">
+          <caption class="socalendar-visually-hidden">
+            ${this.getMonthName(viewMonth, "long")} ${viewYear}
+          </caption>
+          <tr>
+            ${[0,1,2,3,4,5,6].map(i => `
+              <th>${this.getWeekDay(i)}</th>
+            `).join("")}
+          </tr>
+          ${[0,1,2,3,4,5].map(row =>
+            `<tr>
+              ${[0,1,2,3,4,5,6].map(col => {
+                const cell = days[row * 7 + col];
+                const label = `${cell.day} ${this.getMonthName(cell.month, "long")} ${cell.year}`;
+                const classes = [
+                  "socalendar-button",
+                  "soCalendar-select-date",
+                  cell.outside ? "is-outside-month" : "",
+                  cell.isToday ? "is-today" : "",
+                  cell.isCurrent ? "is-current" : "",
+                  cell.isMinDate ? "is-min-date" : "",
+                  cell.isMaxDate ? "is-max-date" : ""
+                ].filter(Boolean).join(" ");
 
-      // If the current cell is the selected date, mark it as current
-      const isCurrent =
-        day === this.day &&
-        month === this.month &&
-        year === this.year;
-
-      const isDisabled = (this.minDate && new Date(year, month, day) < this.minDate || this.maxDate && new Date(year, month, day) > this.maxDate);
-
-      days.push({ day, month, year, outside, isToday, isCurrent, isDisabled });
+                return `
+                  <td>
+                    <button
+                      aria-label="${label}"
+                      type="button"
+                      class="${classes}"
+                      data-year="${cell.year}"
+                      data-month="${cell.month}"
+                      data-day="${cell.day}"
+                      ${cell.isDisabled ? "disabled" : ""}
+                    >
+                      ${cell.day}
+                    </button>
+                  </td>
+                `;
+              }).join("")}
+            </tr>`
+          ).join("")}
+        </table>
+      `;
     }
-
-    this.content.insertAdjacentHTML('beforeend', `
-      <table class="socalendar-date-picker" cellpadding="0" cellspacing="0">
-        <caption class="socalendar-visually-hidden">
-          ${this.getMonthName(viewMonth, "long")} ${viewYear}
-        </caption>
-        <tr>
-          ${[0,1,2,3,4,5,6].map(i => `
-            <th>${this.getWeekDay(i)}</th>
-          `).join("")}
-        </tr>
-        ${[0,1,2,3,4,5].map(row =>
-          `<tr>
-            ${[0,1,2,3,4,5,6].map(col => {
-              const cell = days[row * 7 + col];
-              const label = `${cell.day} ${this.getMonthName(cell.month, "long")} ${cell.year}`;
-              const classes = [
-                "socalendar-button",
-                "soCalendar-select-date",
-                cell.outside ? "is-outside-month" : "",
-                cell.isToday ? "is-today" : "",
-                cell.isCurrent ? "is-current" : ""
-              ].filter(Boolean).join(" ");
-
-              return `
-                <td>
-                  <button
-                    aria-label="${label}"
-                    type="button"
-                    class="${classes}"
-                    data-year="${cell.year}"
-                    data-month="${cell.month}"
-                    data-day="${cell.day}"
-                    ${cell.isDisabled ? "disabled" : ""}
-                  >
-                    ${cell.day}
-                  </button>
-                </td>
-              `;
-            }).join("")}
-          </tr>`
-        ).join("")}
-      </table>
-    `);
 
     // Add button event listeners
     const calendarButtons = this.dialog.querySelectorAll<HTMLButtonElement>("#soCalendar button.soCalendar-select-date");
