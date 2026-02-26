@@ -1,10 +1,21 @@
-/*------------------------------------------------------------------------------
-> soCalendar
-------------------------------------------------------------------------------*/
+/*!*****************************************************************************
+*               _____      _                _            
+*              / ____|    | |              | |           
+*    ___  ___ | |     __ _| | ___ _ __   __| | __ _ _ __ 
+*   / __|/ _ \| |    / _` | |/ _ \ '_ \ / _` |/ _` | '__|
+*   \__ \ (_) | |___| (_| | |  __/ | | | (_| | (_| | |   
+*   |___/\___/ \_____\__,_|_|\___|_| |_|\__,_|\__,_|_|   
+*                                                        
+*   soCalendar - Created by Stewart Orr (https://www.stewartorr.co.uk)
+*   https://github.com/stewartorr/soCalendar
+*   https://www.stewartorr.co.uk/socalendar
+*
+*******************************************************************************/
 
 .socalendar {
   --socalendar-bg-color: #fff;
-  --socalendar-border-radius: 20px;
+  --socalendar-border-radius-dialog: 20px;
+  --socalendar-border-radius-content: 6px;
   --socalendar-primary-color: #099ba4;
   --socalendar-primary-dark: #0c8086;
   --socalendar-primary-color-light: #E7F8F7;
@@ -15,9 +26,11 @@
   --socalendar-gray-color: #999;
   --socalendar-silver-color: #e4e7e7;
   --socalendar-backdrop: rgba(9, 155, 164, 0.25);
+  --socalendar-transition-timing-big: 0.5s;
+  --socalendar-transition-timing-small: 0.15s;
   
   background: var(--socalendar-bg-color);
-  border-radius: var(--socalendar-border-radius);
+  border-radius: var(--socalendar-border-radius-dialog);
   border: 0;
   box-shadow: 0 1em 5em rgba(0, 0, 0, 0.25);
   display: block;
@@ -25,13 +38,13 @@
   padding: 25px;
   position: fixed;
   transform: translate3d(0, 0, 0) scale(0.2);
-  transition: all 0.15s ease-out;
+  transition: all var(--socalendar-transition-timing-small) ease-out;
   visibility: hidden;
   z-index: 1001;
   
   &::backdrop {
     background: var(--socalendar-backdrop);
-    transition: all 0.5s ease;
+    transition: all var(--socalendar-transition-timing-big) ease;
     
     @starting-style {
       background: rgba(0, 0, 0, 0);
@@ -44,7 +57,7 @@
     gap: 20px;
     opacity: 0;
     transform: translate3d(0, 0, 0) scale(0.5);
-    transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: opacity var(--socalendar-transition-timing-big) cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   // When it's open
@@ -52,12 +65,12 @@
     opacity: 1;
     visibility: visible;
     transform: translate3d(0, 0, 0) scale(1);
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all var(--socalendar-transition-timing-big) cubic-bezier(0.23, 1, 0.32, 1);
     
     .socalendar-inner {
       opacity: 1;
       transform: translate3d(0, 0, 0)  scale(1);
-      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.15s;
+      transition: all var(--socalendar-transition-timing-big) cubic-bezier(0.23, 1, 0.32, 1) var(--socalendar-transition-timing-small);
     }
   }
   
@@ -110,7 +123,7 @@
     margin: 0;
     opacity: 1;
     padding: 0;
-    transition: all 0.15s ease;
+    transition: all var(--socalendar-transition-timing-small) ease;
     will-change: color, opacity;
     
     &[disabled] {
@@ -128,7 +141,7 @@
     &.socalendar-prev-month,
     &.socalendar-back {
       opacity: 1;
-      transition: 0.15s ease 0.15s;
+      transition: var(--socalendar-transition-timing-small) ease var(--socalendar-transition-timing-small);
       
       @starting-style {
         opacity: 0;
@@ -138,7 +151,7 @@
 
     &.socalendar-today {
       opacity: 1;
-      transition: 0.15s ease 0.15s;
+      transition: var(--socalendar-transition-timing-small) ease var(--socalendar-transition-timing-small);
       
       @starting-style {
         opacity: 0;
@@ -150,17 +163,10 @@
     &.socalendar-next-month,
     &.socalendar-edit {
       opacity: 1;
-      transition: 0.15s ease 0.15s;
-      
-      // @starting-style {
-      //   opacity: 0;
-      //   transform: translateX(-5px);
-      // }
+      transition: var(--socalendar-transition-timing-small) ease var(--socalendar-transition-timing-small);
     }
     
     &.socalendar-input-button {
-      // border-radius: 0 6px 6px 0 !important;
-      // border-left: 1px solid var(--socalendar-gray-color);
       padding: 5px 10px;
       position: absolute;
       right: 0;
@@ -195,7 +201,7 @@
         justify-content: center;
         line-height: 1.7em;
         transform: translate3d(0, 0, 0);
-        transition: all 0.15s ease;
+        transition: all var(--socalendar-transition-timing-small) ease;
         
         &:before,
         &:after {
@@ -228,7 +234,6 @@
     &.socalendar-label-year {
       text-align: left;
     }
-
   }
 
   &[data-socalendar-view="month"] {
@@ -288,7 +293,7 @@
 
 		&.prev,
 		&.next {
-			transition: transform 0.15s ease;
+			transition: transform var(--socalendar-transition-timing-small) ease;
 		}
 
 		&.prev {
@@ -401,36 +406,12 @@
           height: 60px;
           line-height: 60px;
         }
-
-        // &:nth-child(2n) button,
-        // &:nth-child(3n) button {
-        //   transition-delay: 0.03s;
-        // }
-
-        // &:nth-child(4n) button,
-        // &:nth-child(5n) button {
-        //   transition-delay: 0.06s;
-        // }
-
-        // &:nth-child(6n) button,
-        // &:nth-child(7n) button {
-        //   transition-delay: 0.1s;
-        // }
-
-        // &:nth-child(8n) button,
-        // &:nth-child(9n) button {
-        //   transition-delay: 0.13s;
-        // }
-
-        // &:nth-child(10n) button {
-        //   transition-delay: 0.16s;
-        // }
       }
     }
 
     .socalendar-date-editor,
     .socalendar-year-picker-scroller {
-      border-radius: 6px;
+      border-radius: var(--socalendar-border-radius-content);
       border: 1px solid var(--socalendar-gray-color);
       margin-bottom: 10px;
       flex: 0 1 100%;
@@ -445,7 +426,6 @@
           overflow: hidden;
           display: inline-block;
           width: 4ch;
-
         }
 
         .separator {
@@ -476,7 +456,7 @@
 
         &.prev,
         &.next {
-          transition: transform 0.15s ease;
+          transition: transform var(--socalendar-transition-timing-small) ease;
         }
 
         &.prev {
@@ -489,53 +469,29 @@
       }
     }
 
-    
     .socalendar-date-editor {
       display: flex;
       justify-content: center;
       overflow: hidden;
       position: relative;
-
-      // &::before {
-      //   content: "__/__/____";
-      //   color: var(--socalendar-gray-color);
-      //   position: absolute;
-      //   left: 50%;
-      //   transform: translateX(-50%);
-      //   opacity: 0.5;
-      //   pointer-events: none;
-      // }
     }
     
-    .socalendar-date-editor:before,
     .socalendar-input {
       background: transparent;
-      border-radius: 6px;
+      border-radius: var(--socalendar-border-radius-content);
       border: 0;
       caret-color: var(--socalendar-primary-color);
       font-size: 20px;
       font-variant-numeric: tabular-nums;
-      // font-family: "Geist Mono";
       outline: 0 !important;
       padding: 10px;
       width: 10ch;
-      &:focus {
-        box-shadow: 0 0 0 2px var(--socalendar-primary-color-hover);
-      }
     }
 
-    .socalendar-input {
-      -webkit-appearance: none;
-      appearance: none;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 2px white, 2px 0 white, 2px 2px white;
-    }
-  
     button.socalendar-button {
       box-sizing: border-box;
       background: var(--socalendar-primary-color-light);
-      border-radius: 0.33em;
+      border-radius: var(--socalendar-border-radius-content);
       color: var(--socalendar-primary-color);
       cursor: pointer;
       display: block;
@@ -593,7 +549,7 @@
           color: var(--socalendar-white-color);
 
           &.is-start {
-            border-radius: 6px 0 0 6px;
+            border-radius: var(--socalendar-border-radius-content) 0 0 var(--socalendar-border-radius-content);
           }
 
           &.is-in-range {
@@ -602,7 +558,7 @@
           }
 
           &.is-end {
-            border-radius: 0 6px 6px 0;
+            border-radius: 0 var(--socalendar-border-radius-content) var(--socalendar-border-radius-content) 0;
           }
 
           &:hover {

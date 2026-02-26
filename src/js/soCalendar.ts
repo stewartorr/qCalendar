@@ -658,13 +658,6 @@ export class soCalendar {
     confirm.disabled = maskedValue.length !== maskPattern.length;
   }
 
-  private generateYearRange(year?: number | null): void {
-    const yearPickerInner!: HTMLElement = document.getElementById('soCalendar-year-picker-inner');
-    let yearPickerHTML: string = '';
-
-
-  }
-
   private generateYearPicker(year?: number | null): void {
     if (!year) year = this.year;
 
@@ -726,9 +719,9 @@ export class soCalendar {
       </div>
     `;
 
-    const yearPickerInner!: HTMLButtonElement = document.getElementById('soCalendar-year-picker-inner');
-    const prevDecade!: HTMLButtonElement = document.getElementById('soCalendar-decade-prev');
-    const nextDecade!: HTMLButtonElement = document.getElementById('soCalendar-decade-next');
+    const yearPickerInner = document.getElementById('soCalendar-year-picker-inner')!;
+    const prevDecade = document.getElementById('soCalendar-decade-prev')!;
+    const nextDecade = document.getElementById('soCalendar-decade-next')!;
 
     prevDecade.addEventListener('click', () => {
       yearPickerInner.addEventListener('transitionend', () => {

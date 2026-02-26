@@ -27,3 +27,5 @@ soCalendar was designed and developed by Stewart Orr (https://www.stewartorr.co.
 ## Credits
 
 The icons are from the beautiful library [Phosphor Icons](https://phosphoricons.com/).
+
+The font used in the calendar is [Oswald](https://fonts.google.com/specimen/Oswald)
