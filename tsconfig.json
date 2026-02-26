@@ -5,8 +5,8 @@
     "strict": true,
     "declaration": true,
     "declarationDir": "./dist/types",
-    "outDir": "./dist/ts",
-    "rootDir": "./src/js",
+    "emitDeclarationOnly": true,
+    "rootDir": "./src/js"
   },
-  "include": ["src/js/*"]
+  "include": ["src/js/**/*.ts"]
 }
