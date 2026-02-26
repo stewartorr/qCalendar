@@ -1,0 +1,57 @@
+{
+  "devDependencies": {
+    "esbuild": "^0.27.3",
+    "sass": "^1.97.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "name": "socalendar",
+  "version": "1.0.0",
+  "description": "soCalendar is a beautiful & simple calendar date picker in TypeScript designed to be beautifully simple, intuitive and lightweight.",
+  "main": "./dist/js/socalendar.cjs",
+  "module": "./dist/js/socalendar.esm.js",
+  "types": "./dist/types/soCalendar.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/soCalendar.d.ts",
+      "require": "./dist/js/socalendar.cjs",
+      "import": "./dist/js/socalendar.esm.js"
+    },
+    "./browser": "./dist/js/socalendar.browser.js",
+    "./browser.min": "./dist/js/socalendar.browser.min.js",
+    "./css": "./dist/css/socalendar.css",
+    "./css.min": "./dist/css/socalendar.min.css",
+    "./types": "./dist/types/soCalendar.d.ts"
+  },
+  "unpkg": "./dist/js/socalendar.browser.min.js",
+  "jsdelivr": "./dist/js/socalendar.browser.min.js",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": ["dist/css/*.css"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "preview": "vite preview",
+    "build:css": "sass src/scss/socalendar.scss dist/css/socalendar.css --no-source-map",
+    "build:css:min": "sass src/scss/socalendar.scss dist/css/socalendar.min.css --style=compressed --no-source-map",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist/types --rootDir src/js",
+    "build:esm": "esbuild src/js/soCalendar.ts --bundle --format=esm --outfile=dist/js/socalendar.esm.js --sourcemap",
+    "build:cjs": "esbuild src/js/soCalendar.ts --bundle --format=cjs --outfile=dist/js/socalendar.cjs --sourcemap",
+    "build:browser": "esbuild src/js/soCalendar.ts --bundle --format=iife --global-name=soCalendar --outfile=dist/js/socalendar.browser.js --sourcemap",
+    "build:browser:min": "esbuild src/js/soCalendar.ts --bundle --minify --format=iife --global-name=soCalendar --outfile=dist/js/socalendar.browser.min.js",
+    "build": "npm run build:types && npm run build:esm && npm run build:cjs && npm run build:browser && npm run build:browser:min && npm run build:css && npm run build:css:min"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stewartorr/soCalendar.git"
+  },
+  "keywords": [],
+  "author": "Stewart Orr",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/stewartorr/soCalendar/issues"
+  },
+  "homepage": "https://github.com/stewartorr/soCalendar#readme"
+}
