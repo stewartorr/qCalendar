@@ -17,7 +17,7 @@ interface SoCalendarOptions {
     dateFormat?: string;
     weekStartsOnMonday?: boolean;
 }
-export declare class soCalendar {
+export default class SoCalendar {
     private dialog;
     private content;
     private contentPrev;

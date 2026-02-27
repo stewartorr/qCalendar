@@ -21,7 +21,7 @@ interface SoCalendarOptions {
   weekStartsOnMonday?: boolean;
 }
 
-export class soCalendar {
+export default class SoCalendar {
   private dialog!: HTMLDialogElement;
   private content!: HTMLElement;
   private contentPrev!: HTMLElement;
@@ -89,7 +89,7 @@ export class soCalendar {
   };
 
   constructor(options: SoCalendarOptions = {}) {
-    const config = { ...soCalendar.DEFAULTS, ...options };
+    const config = { ...SoCalendar.DEFAULTS, ...options };
     Object.assign(this, config);
 
     // Generate the week days based on the locale

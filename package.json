@@ -39,8 +39,8 @@
     "build:types": "tsc -p tsconfig.json",
     "build:esm": "esbuild src/js/soCalendar.ts --bundle --format=esm --outfile=dist/js/socalendar.esm.js --sourcemap",
     "build:cjs": "esbuild src/js/soCalendar.ts --bundle --format=cjs --outfile=dist/js/socalendar.cjs --sourcemap",
-    "build:browser": "esbuild src/js/soCalendar.ts --bundle --format=iife --global-name=soCalendar --outfile=dist/js/socalendar.browser.js --sourcemap",
-    "build:browser:min": "esbuild src/js/soCalendar.ts --bundle --minify --format=iife --global-name=soCalendar --outfile=dist/js/socalendar.browser.min.js",
+    "build:browser": "esbuild src/js/browser.ts --bundle --format=iife --outfile=dist/js/socalendar.browser.js --sourcemap",
+    "build:browser:min": "esbuild src/js/browser.ts --bundle --minify --format=iife --outfile=dist/js/socalendar.browser.min.js",
     "build": "npm run build:types && npm run build:esm && npm run build:cjs && npm run build:browser && npm run build:browser:min && npm run build:css && npm run build:css:min"
   },
   "repository": {

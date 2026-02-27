@@ -20,10 +20,10 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/js/soCalendar.ts
 var soCalendar_exports = {};
 __export(soCalendar_exports, {
-  soCalendar: () => soCalendar
+  default: () => SoCalendar
 });
 module.exports = __toCommonJS(soCalendar_exports);
-var soCalendar = class _soCalendar {
+var SoCalendar = class _SoCalendar {
   constructor(options = {}) {
     this.date = /* @__PURE__ */ new Date();
     this.today = /* @__PURE__ */ new Date();
@@ -74,7 +74,7 @@ var soCalendar = class _soCalendar {
       target.setSelectionRange(cursorPos, cursorPos);
       confirm.disabled = maskedValue.length !== maskPattern.length;
     };
-    const config = { ..._soCalendar.DEFAULTS, ...options };
+    const config = { ..._SoCalendar.DEFAULTS, ...options };
     Object.assign(this, config);
     this.generateWeekDays();
     const dialog = document.createElement("dialog");

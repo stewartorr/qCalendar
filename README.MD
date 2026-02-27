@@ -6,7 +6,36 @@ soCalendar is a beautiful & simple calendar date picker in TypeScript designed t
 
 ![soCalendar Preview](docs/socalendar.png)
 
-**Demo coming soon**
+## Demo
+
+Check out the [soCalendar demo](https://stewartorr.github.io/soCalendar/).
+
+## Usage
+
+### Bundler
+
+```
+import "socalendar/css"; // or "socalendar/css.min"
+import { soCalendar } from "socalendar";
+```
+
+### CDN usage
+
+#### Import the CSS file
+
+```
+<link href="https://cdn.jsdelivr.net/npm/socalendar/dist/css/socalendar.min.css" rel="stylesheet">`
+```
+
+
+#### Import the javascript file
+
+```
+<script src="https://cdn.jsdelivr.net/npm/socalendar/dist/js/socalendar.browser.min.js"></script>
+<script>
+  const calendar = new SoCalendar();
+</script>
+```
 
 ## Design
 
@@ -18,7 +47,12 @@ https://www.figma.com/proto/lv1vTydLdjuYLOuKXEv8Ek/Calendar---Date-Picker-UI?pag
 
 ## Development
 
-Built in TypeScript and using SCSS, it uses Vite to help build and test changes quickly.
+Built in TypeScript & SCSS, it uses Vite to help build and test changes quickly as part of the development process.
+
+```
+npm install
+npm run dev
+```
 
 ## Designer & Author
 
