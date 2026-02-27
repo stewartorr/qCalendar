@@ -6,6 +6,26 @@ soCalendar is a beautiful & simple calendar date picker in TypeScript designed t
 
 ![soCalendar Preview](docs/socalendar.png)
 
+## Usage
+
+
+### Bundler
+
+```
+import "socalendar/css"; // or "socalendar/css.min"
+import { soCalendar } from "socalendar";
+```
+
+### CDN usage
+
+#### Import the javascript file
+
+`<script src="https://cdn.jsdelivr.net/npm/socalendar/dist/js/socalendar.browser.min.js"></script>`
+
+#### Import the CSS file
+
+`<link href="hhttps://cdn.jsdelivr.net/npm/socalendar/dist/css/socalendar.min.css" rel="stylesheet">`
+
 **Demo coming soon**
 
 ## Design
